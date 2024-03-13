@@ -5,6 +5,21 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 import React, { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
+import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons"
+import { cn } from "@/lib/utils"
+import {
+  Command,
+  CommandList,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from "@/components/ui/command"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 import {
   Form,
   FormControl,
@@ -16,87 +31,173 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import CompanyField from "./companyField"
+import { createIntRecord, getRecords } from "@/lib/airtable"
+import { useToast } from "@/components/ui/use-toast"
+import { ToastAction } from "@radix-ui/react-toast"
 
-interface Record {
-  id: string;
+//import CompanyField from "./companyField"
+
+interface Company {
+  id: number
   fields: {
-    "Name": string;
-  };
+    Company: string
+  }
 }
 
 const formSchema = z.object({
-  email: z.string().email({ message: "Invalid email address"}),
-  companies: z.string(),
+  email: z.string().email({ message: "Invalid email address" }),
+  company: z.string(),
   comments: z.string()
 })
 
 const ProfileForm = () => {
   let [sessionEmail, setSessionEmail] = useState("");
-
-  useEffect(() => {
-    
-  }, []);
+  const [companies, setCompanies] = React.useState<Company[] | null>([])
+  //const [selectedCompany, setSelectedCompany] = React.useState<Company | null>(null)
+  const { toast } = useToast()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    //mode: "onChange"
+    defaultValues: {
+      email: sessionEmail
+    }
   });
 
-  const onSubmit = (data: z.infer<typeof formSchema>) => {
-    console.log("The form has been submitted")
-    console.log(data);
-    //setSessionEmail(data.email);
-  };
+  useEffect(() => {
+    const loadRecords = async () => {
+        let data = await getRecords("2024 Hiring Fair - Companies");
+        setCompanies(data);
+    }
+    loadRecords();
+    if (form.formState.isSubmitSuccessful) {
+      //form.resetField("email", { value: sessionEmail }) 
+      form.resetField("company")
+      form.resetField("comments") 
+    }
 
-  // const handleChange = (event: React.FormEvent<HTMLFormElement>) => {
-  //   event.preventDefault();
-  // }
+  }, [form.formState, form.reset])
+
+
+  const onSubmit = (data: z.infer<typeof formSchema>) => {
+    createIntRecord("2024 Hiring Fair - Interactions", data);
+    setSessionEmail(data.email);
+    toast({
+      title: "Form Submitted",
+      description: `Your profile has been submitted to ${data.company}. Keep connecting!`,
+    })
+  };
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}> 
+      <form onSubmit={form.handleSubmit(onSubmit)}>
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <Input placeholder="your@email.com...." {...field} />
+              </FormControl>
+              <FormDescription>Please use the same email that you used to sign up.</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <div className="my-5 w-full">
           <FormField
             control={form.control}
-            name="email"
-            defaultValue={sessionEmail}
+            name="company"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email</FormLabel>
+                <FormLabel>Company</FormLabel>
                 <FormControl>
-                  <Input placeholder="your@email.com...." {...field} />
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          className={cn(
+                            "w-full justify-between",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          {field.value
+                            ? companies?.find(
+                              (company) => company.fields.Company === field.value
+                            )?.fields.Company
+                            : "Select language"}
+                          <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-full p-0">
+                      <Command>
+                        <CommandInput
+                          placeholder="Search framework..."
+                          className="h-9"
+                        />
+                        <CommandEmpty>No framework found.</CommandEmpty>
+                        <CommandList>
+                          <CommandGroup>
+                            {companies && companies.map((company) => (
+                              <CommandItem
+                                value={company.fields.Company}
+                                key={company.id}
+                                className={cn(
+                                  "relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-base outline-none aria-selected:bg-accent aria-selected:text-accent-foreground data-[disabled='true']:pointer-events-none data-[disabled='true']:opacity-50"
+                                )}
+                                onSelect={() => {
+                                  form.setValue("company", company.fields.Company)
+                                }}
+                              >
+                                {company.fields.Company}
+                                <CheckIcon
+                                  className={cn(
+                                    "ml-auto h-4 w-4",
+                                    company.fields.Company === field.value
+                                      ? "opacity-100"
+                                      : "opacity-0"
+                                  )}
+                                />
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
                 </FormControl>
-                <FormDescription>Please use the same email that you used to sign up.</FormDescription>
+                <FormDescription>Select a Company.</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
+        </div>
 
-          {/* <div className="my-5 w-full">
-           <CompanyField form={form} />
-          </div> */}
+        <div className="my-5">
+          <FormField
+            control={form.control}
+            name="comments"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Write a Comment</FormLabel>
+                <FormControl>
+                  <Textarea placeholder="Write a quick message here...." {...field} />
+                </FormControl>
+                <FormDescription>Write a wonderful message to the hiring partner you just met!</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
 
-          <div className="my-5">  
-            <FormField
-              control={form.control}
-              name="comments"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Write a Comment</FormLabel>
-                  <FormControl>
-                    <Textarea placeholder="Write a quick message here...." {...field} />
-                  </FormControl>
-                  <FormDescription>Write a wonderful message to the hiring partner you just met!</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          <div className="my-5">
-            <Button type="submit">Submit</Button>
-          </div>
-      </form> 
+        <Button type="submit">Submit</Button>
+      </form>
     </Form>
+
   )
 }
 
