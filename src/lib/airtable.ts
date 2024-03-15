@@ -11,12 +11,14 @@ interface Record {
     comments: string;
 }
 
+
 export async function getRecords(tableName: string) {
   const table = talentBase(tableName)
   const records = await table.select().firstPage();
 
   return records;
 }
+
 
 export async function createIntRecord(tableName: string, data: Record) {
   const table = talentBase(tableName)

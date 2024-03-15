@@ -75,7 +75,7 @@ const ProfileForm = () => {
       form.resetField("comments") 
     }
 
-  }, [form.formState, form.reset])
+  }, [])
 
 
   const onSubmit = (data: z.infer<typeof formSchema>) => {
@@ -97,7 +97,7 @@ const ProfileForm = () => {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder="your@email.com...." {...field} />
+                <Input placeholder="Enter your email" {...field} />
               </FormControl>
               <FormDescription>Please use the same email that you used to sign up.</FormDescription>
               <FormMessage />
@@ -128,7 +128,7 @@ const ProfileForm = () => {
                             ? companies?.find(
                               (company) => company.fields.Company === field.value
                             )?.fields.Company
-                            : "Select language"}
+                            : "Select a company"}
                           <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                         </Button>
                       </FormControl>
@@ -136,10 +136,10 @@ const ProfileForm = () => {
                     <PopoverContent className="w-full p-0">
                       <Command>
                         <CommandInput
-                          placeholder="Search framework..."
+                          placeholder="Search for a company..."
                           className="h-9"
                         />
-                        <CommandEmpty>No framework found.</CommandEmpty>
+                        <CommandEmpty>No company found.</CommandEmpty>
                         <CommandList>
                           <CommandGroup>
                             {companies && companies.map((company) => (
@@ -170,7 +170,7 @@ const ProfileForm = () => {
                     </PopoverContent>
                   </Popover>
                 </FormControl>
-                <FormDescription>Select a Company.</FormDescription>
+                <FormDescription>Choose the company that you liked to make a connection</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -185,7 +185,7 @@ const ProfileForm = () => {
               <FormItem>
                 <FormLabel>Write a Comment</FormLabel>
                 <FormControl>
-                  <Textarea placeholder="Write a quick message here...." {...field} />
+                  <Textarea placeholder="Write a quick message here" {...field} />
                 </FormControl>
                 <FormDescription>Write a wonderful message to the hiring partner you just met!</FormDescription>
                 <FormMessage />
@@ -194,7 +194,7 @@ const ProfileForm = () => {
           />
         </div>
 
-        <Button type="submit">Submit</Button>
+        <Button className="w-full bg-[#3F47FD]" type="submit">Submit</Button>
       </form>
     </Form>
 
