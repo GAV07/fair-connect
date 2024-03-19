@@ -108,7 +108,7 @@ const ProfileForm = () => {
               <FormControl>
                 <Input placeholder="Enter your email" {...field} />
               </FormControl>
-              <FormDescription>Please use the same email that you used to sign up.</FormDescription>
+              <FormDescription>Same as registration email</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -178,7 +178,7 @@ const ProfileForm = () => {
                     </PopoverContent>
                   </Popover>
                 </FormControl>
-                <FormDescription>Choose the company that you liked to make a connection</FormDescription>
+                {/* <FormDescription>Choose the company that you liked to make a connection</FormDescription> */}
                 <FormMessage />
               </FormItem>
             )}
@@ -195,7 +195,7 @@ const ProfileForm = () => {
                 <FormControl>
                   <Textarea placeholder="Write a quick message here" {...field} />
                 </FormControl>
-                <FormDescription>Write a wonderful message to the hiring partner you just met!</FormDescription>
+                <FormDescription>Write a unique message!</FormDescription>
                 <FormMessage />
               </FormItem>
             )}

@@ -22,7 +22,7 @@ export default function Home() {
           <Card className="w-[80vw] md:w-[30vw]">
             <CardHeader>
               <CardTitle className="text-[#3F47FD]">2024 Venture Miami Hiring Fair</CardTitle>
-              <CardDescription>Use this form to connect with each company you have connected with during the fair. If you are in our Talent Database they will see your profile and resume once submitted.</CardDescription>
+              <CardDescription>Connect with companies you meet. If you are in our Talent Database they will see your profile!</CardDescription>
             </CardHeader>
             <CardContent>
               <ProfileForm /> 
