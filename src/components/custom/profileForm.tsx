@@ -1,7 +1,7 @@
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
+import { set, useForm } from "react-hook-form"
 import { z } from "zod"
 import React, { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
@@ -52,6 +52,7 @@ const formSchema = z.object({
 
 const ProfileForm = () => {
   let [sessionEmail, setSessionEmail] = useState("");
+  const [open, setOpen] = React.useState(false)
   const [companies, setCompanies] = React.useState<Company[] | null>([])
   //const [selectedCompany, setSelectedCompany] = React.useState<Company | null>(null)
   const { toast } = useToast()
@@ -113,12 +114,13 @@ const ProfileForm = () => {
               <FormItem>
                 <FormLabel>Company</FormLabel>
                 <FormControl>
-                  <Popover>
+                  <Popover open={open} onOpenChange={setOpen}>
                     <PopoverTrigger asChild>
                       <FormControl>
                         <Button
                           variant="outline"
                           role="combobox"
+                          aria-expanded={open}
                           className={cn(
                             "w-full justify-between",
                             !field.value && "text-muted-foreground"
@@ -139,18 +141,16 @@ const ProfileForm = () => {
                           placeholder="Search for a company..."
                           className="h-9"
                         />
-                        <CommandEmpty>No company found.</CommandEmpty>
                         <CommandList>
+                          <CommandEmpty>No company found.</CommandEmpty>
                           <CommandGroup>
                             {companies && companies.map((company) => (
                               <CommandItem
                                 value={company.fields.Company}
                                 key={company.id}
-                                className={cn(
-                                  "relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-base outline-none aria-selected:bg-accent aria-selected:text-accent-foreground data-[disabled='true']:pointer-events-none data-[disabled='true']:opacity-50"
-                                )}
                                 onSelect={() => {
                                   form.setValue("company", company.fields.Company)
+                                  setOpen(false)
                                 }}
                               >
                                 {company.fields.Company}
