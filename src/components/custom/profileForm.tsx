@@ -54,14 +54,10 @@ const ProfileForm = () => {
   let [sessionEmail, setSessionEmail] = useState("");
   const [open, setOpen] = React.useState(false)
   const [companies, setCompanies] = React.useState<Company[] | null>([])
-  //const [selectedCompany, setSelectedCompany] = React.useState<Company | null>(null)
   const { toast } = useToast()
 
   const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      email: sessionEmail
-    }
+    resolver: zodResolver(formSchema)
   });
 
   useEffect(() => {
@@ -70,13 +66,24 @@ const ProfileForm = () => {
         setCompanies(data);
     }
     loadRecords();
+
+    form.watch((data, { name }) => {
+      if(data.email) {
+        if (name === 'email') {
+          setSessionEmail(data.email);
+        }
+      }
+    });
+
     if (form.formState.isSubmitSuccessful) {
-      //form.resetField("email", { value: sessionEmail }) 
-      form.resetField("company")
-      form.resetField("comments") 
+      form.reset({
+        email: sessionEmail,
+        company: "",
+        comments: ""
+      })
     }
 
-  }, [])
+  }, [form.watch, form.formState.isSubmitSuccessful])
 
 
   const onSubmit = (data: z.infer<typeof formSchema>) => {
@@ -86,6 +93,7 @@ const ProfileForm = () => {
       title: "Form Submitted",
       description: `Your profile has been submitted to ${data.company}. Keep connecting!`,
     })
+    
   };
 
   return (
