@@ -11,12 +11,16 @@ import {
   CardTitle,
 } from "@/components/ui/card" 
 import background from "@/images/background.svg"
+import Confetti from "@/components/custom/confetti"
 
 export default function Home() {
   return (
     <main className="relative flex min-h-screen flex-col items-center justify-center">
-        <div className="absolute z-0 w-[100vw] h-[100vh] ">
+        <div className="absolute z-0 w-[100vw] h-[100vh]">
           <Image className="object-cover w-full h-full" src={background} alt="background" />
+        </div>
+        <div className="absolute z-1 w-[100%] h-[100%]">
+          <Confetti />
         </div>
         <div className="relative z-10">
           <Card className="w-[80vw] md:w-[30vw]">
