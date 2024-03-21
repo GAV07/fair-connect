@@ -1,7 +1,9 @@
+"use client";
+
 import Image from "next/image";
 import ProfileForm  from "../components/custom/profileForm";
 require('dotenv').config({ path: '@/.env.local' });
-import * as React from "react"
+import React, {useState} from "react"
 import {
   Card,
   CardContent,
@@ -14,13 +16,23 @@ import background from "@/images/background.svg"
 import Confetti from "@/components/custom/confetti"
 
 export default function Home() {
+  const [showConfetti, setShowConfetti] = useState(false);
+
+  const handleFormSubmit = () => {
+    // Trigger the confetti animation upon form submission
+    setShowConfetti(true);
+
+    // Optionally, turn off confetti after a delay
+    //setTimeout(() => setShowConfetti(false), 5000);
+  };
+
   return (
     <main className="relative flex min-h-screen flex-col items-center justify-center">
         <div className="absolute z-0 w-[100vw] h-[100vh]">
           <Image className="object-cover w-full h-full" src={background} alt="background" />
         </div>
         <div className="absolute z-1 w-[100%] h-[100%]">
-          <Confetti />
+          <Confetti showConfetti={showConfetti} />
         </div>
         <div className="relative z-10">
           <Card className="w-[80vw] md:w-[30vw]">
@@ -29,7 +41,7 @@ export default function Home() {
               <CardDescription>Connect with companies you meet. If you are in our Talent Database they will see your profile!</CardDescription>
             </CardHeader>
             <CardContent>
-              <ProfileForm /> 
+              <ProfileForm onFormSubmit={handleFormSubmit} /> 
             </CardContent>
           </Card>
         </div>

@@ -48,7 +48,7 @@ const formSchema = z.object({
   comments: z.string()
 })
 
-const ProfileForm = () => {
+const ProfileForm = ({ onFormSubmit }: { onFormSubmit: () => void }) => {
   let [sessionEmail, setSessionEmail] = useState("");
   const [open, setOpen] = React.useState(false)
   const [companies, setCompanies] = React.useState<Company[] | null>([])
@@ -79,6 +79,7 @@ const ProfileForm = () => {
         company: "",
         comments: ""
       })
+      onFormSubmit();
     }
 
   }, [form.watch, form.formState.isSubmitSuccessful])
