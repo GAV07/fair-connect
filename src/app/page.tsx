@@ -27,15 +27,15 @@ export default function Home() {
   };
 
   return (
-    <main className="relative flex min-h-screen flex-col items-center justify-center">
+    <main className="relative flex m-0  min-h-screen flex-col items-center justify-center">
         <div className="absolute z-0 w-[100vw] h-[100vh]">
           <Image className="object-cover w-full h-full" src={background} alt="background" />
         </div>
-        <div className="absolute z-1 w-[100%] h-[100%]">
+        <div className="absolute z-1 w-[100vw] h-[100vh]">
           <Confetti showConfetti={showConfetti} />
         </div>
         <div className="relative z-10">
-          <Card className="w-[80vw] md:w-[30vw]">
+          <Card className="w-[85vw] md:w-[50vw] lg:w-[30vw]">
             <CardHeader>
               <CardTitle className="text-[#3F47FD]">2024 Venture Miami Hiring Fair</CardTitle>
               <CardDescription>Connect with companies you meet. If you are in our Talent Database they will see your profile!</CardDescription>
